@@ -1,18 +1,22 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-import PIL
 import tensorflow as tf
 import pathlib
-import matplotlib.pyplot as plt
-import pathlib
-
 from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.models import Sequential
+from PIL import Image
+import easygui
 
-new_model = tf.keras.models.load_model('saved_model/my_model')
+new_model = tf.keras.models.load_model('saved_model/my_model3_aggresive_augmentation_many_epochs_more_dropout')
 new_model.summary()
+
+def vvid():
+  msg = 'Введіть шлях до зображення'
+  title = 'Введення шляху до зображення'
+  fieldValues2 = easygui.enterbox(msg, title)
+  path_string = fieldValues2
+  return path_string
+
+image_path = vvid()
 
 data_dir = "dataset-resized"
 data_dir = pathlib.Path(data_dir)
@@ -40,7 +44,7 @@ val_ds = tf.keras.preprocessing.image_dataset_from_directory(
   batch_size=batch_size)
 class_names = train_ds.class_names
 
-bottle_path = "paper30.jpg"
+bottle_path = image_path
 bottle_path = pathlib.Path(bottle_path)
 
 img = keras.preprocessing.image.load_img(
@@ -56,3 +60,18 @@ print(
     "This image most likely belongs to {} with a {:.2f} percent confidence."
     .format(class_names[np.argmax(score)], 100 * np.max(score))
 )
+
+result_string = "Це зображення належить до классу '{}' з ймовірністю {:.2f} %.".format(class_names[np.argmax(score)], 100 * np.max(score))
+
+img = Image.open(image_path)
+fig, ax = plt.subplots()
+ax.imshow(img)
+ax.spines['top'].set_visible(False)
+ax.spines['left'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.set_xticks([])
+ax.set_yticks([])
+fig.suptitle(result_string, fontsize=14, fontweight='bold')
+plt.show()
+
